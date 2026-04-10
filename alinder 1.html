@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Alinder</title>
+
+<style>
+
+body{
+font-family:-apple-system;
+background:#f5f5f7;
+text-align:center;
+margin:0;
+}
+
+h1{
+margin-top:30px;
+}
+
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:10px;
+max-width:400px;
+margin:20px auto;
+padding:10px;
+}
+
+.day{
+background:white;
+padding:15px;
+border-radius:15px;
+cursor:pointer;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+font-weight:bold;
+}
+
+.day:hover{
+background:#eaeaea;
+}
+
+#alarmInput{
+margin-top:20px;
+}
+
+input{
+padding:10px;
+margin:5px;
+border-radius:10px;
+border:1px solid #ccc;
+}
+
+button{
+padding:6px 10px;
+border:none;
+border-radius:8px;
+background:black;
+color:white;
+cursor:pointer;
+margin-left:10px;
+}
+
+.alarm{
+background:white;
+padding:10px;
+margin:8px auto;
+max-width:300px;
+border-radius:12px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Alinder</h1>
+
+<h2>4월</h2>
+
+<div class="calendar">
+
+<div class="day" onclick="selectDay(1)">1</div>
+<div class="day" onclick="selectDay(2)">2</div>
+<div class="day" onclick="selectDay(3)">3</div>
+<div class="day" onclick="selectDay(4)">4</div>
+<div class="day" onclick="selectDay(5)">5</div>
+<div class="day" onclick="selectDay(6)">6</div>
+<div class="day" onclick="selectDay(7)">7</div>
+
+<div class="day" onclick="selectDay(8)">8</div>
+<div class="day" onclick="selectDay(9)">9</div>
+<div class="day" onclick="selectDay(10)">10</div>
+<div class="day" onclick="selectDay(11)">11</div>
+<div class="day" onclick="selectDay(12)">12</div>
+<div class="day" onclick="selectDay(13)">13</div>
+<div class="day" onclick="selectDay(14)">14</div>
+
+<div class="day" onclick="selectDay(15)">15</div>
+<div class="day" onclick="selectDay(16)">16</div>
+<div class="day" onclick="selectDay(17)">17</div>
+<div class="day" onclick="selectDay(18)">18</div>
+<div class="day" onclick="selectDay(19)">19</div>
+<div class="day" onclick="selectDay(20)">20</div>
+<div class="day" onclick="selectDay(21)">21</div>
+
+<div class="day" onclick="selectDay(22)">22</div>
+<div class="day" onclick="selectDay(23)">23</div>
+<div class="day" onclick="selectDay(24)">24</div>
+<div class="day" onclick="selectDay(25)">25</div>
+<div class="day" onclick="selectDay(26)">26</div>
+<div class="day" onclick="selectDay(27)">27</div>
+<div class="day" onclick="selectDay(28)">28</div>
+
+<div class="day" onclick="selectDay(29)">29</div>
+<div class="day" onclick="selectDay(30)">30</div>
+
+</div>
+
+<h2 id="selectedDate">날짜를 선택하세요</h2>
+
+<div id="alarmInput">
+
+<input type="time" id="alarmTime">
+<input type="text" id="alarmTitle" placeholder="알람 이름">
+<button onclick="addAlarm()">추가</button>
+
+</div>
+
+<div id="alarmList"></div>
+
+<script>
+
+let currentDay=null;
+
+function getData(){
+return JSON.parse(localStorage.getItem("alinder") || "{}");
+}
+
+function saveData(data){
+localStorage.setItem("alinder", JSON.stringify(data));
+}
+
+function selectDay(day){
+
+currentDay=day;
+
+document.getElementById("selectedDate").innerText="4월 "+day+"일";
+
+renderAlarms();
+
+}
+
+function addAlarm(){
+
+if(!currentDay){
+alert("날짜를 먼저 선택하세요");
+return;
+}
+
+let time=document.getElementById("alarmTime").value;
+let title=document.getElementById("alarmTitle").value;
+
+if(time===""){
+alert("시간을 입력하세요");
+return;
+}
+
+let data=getData();
+
+if(!data[currentDay]){
+data[currentDay]=[];
+}
+
+data[currentDay].push({
+time:time,
+title:title
+});
+
+saveData(data);
+
+renderAlarms();
+
+}
+
+function deleteAlarm(index){
+
+let data=getData();
+
+data[currentDay].splice(index,1);
+
+saveData(data);
+
+renderAlarms();
+
+}
+
+function renderAlarms(){
+
+let list=document.getElementById("alarmList");
+
+list.innerHTML="";
+
+let data=getData();
+
+let alarms=data[currentDay] || [];
+
+alarms.sort((a,b)=>a.time.localeCompare(b.time));
+
+alarms.forEach((a,index)=>{
+
+let alarm=document.createElement("div");
+
+alarm.className="alarm";
+
+alarm.innerHTML=
+"<span>"+a.time+" "+a.title+"</span>"+
+"<button onclick='deleteAlarm("+index+")'>삭제</button>";
+
+list.appendChild(alarm);
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
